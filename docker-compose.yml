@@ -1,0 +1,50 @@
+name: portainer-edge-agent
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+    compress: "true"
+
+services:
+  portainer-edge-agent:
+    image: portainer/agent:${PORTAINER_AGENT_TAG:-2.45.1}
+    container_name: portainer-edge-agent
+    restart: unless-stopped
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      TZ: "${TZ:-Europe/Athens}"
+      # Edge
+      EDGE: "1"
+      EDGE_ID: "${EDGE_ID:?EDGE_ID is required}"
+      EDGE_KEY: "${EDGE_KEY:?EDGE_KEY is required}"
+      EDGE_INSECURE_POLL: "0"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host:ro
+      - data:/data
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          # noinspection ComposeUnknownValues
+          cpus: "${PORTAINER_AGENT_CPU_LIMIT:-0.5}"
+          # noinspection ComposeUnknownValues
+          memory: "${PORTAINER_AGENT_MEMORY_LIMIT:-128m}"
+          # noinspection ComposeUnknownValues
+          pids: ${PORTAINER_AGENT_PIDS_LIMIT:-200}
+        reservations:
+          # noinspection ComposeUnknownValues
+          memory: "${PORTAINER_AGENT_MEMORY_RESERVATION:-32m}"
+
+networks:
+  default:
+    name: portainer-edge-agent
+
+volumes:
+  data:
+    name: portainer-edge-agent-data

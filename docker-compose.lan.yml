@@ -1,0 +1,4 @@
+services:
+  portainer-edge-agent:
+    extra_hosts:
+      - "${PORTAINER_DOMAIN:-portainer.local}:${PORTAINER_IP:-127.0.0.1}"
