@@ -9,7 +9,7 @@ x-logging: &default-logging
 
 services:
   portainer-edge-agent:
-    image: portainer/agent:${PORTAINER_AGENT_TAG:-2.45.1}
+    image: portainer/agent:2.45.3
     container_name: portainer-edge-agent
     restart: unless-stopped
     stop_grace_period: 30s
